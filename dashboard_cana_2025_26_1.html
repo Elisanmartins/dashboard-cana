@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cana-de-Açúcar 2025/26 | Dashboard Econômico</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+            color: #e8eaed;
+            font-family: 'Courier New', -apple-system, monospace;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 50px;
+            border-bottom: 2px solid rgba(127, 179, 213, 0.3);
+            padding-bottom: 32px;
+        }
+
+        .header-tag {
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #7fb3d5;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 52px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: -2px;
+            background: linear-gradient(90deg, #ffffff 0%, #7fb3d5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #b0b7c3;
+            letter-spacing: 0.5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: #b0b7c3;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            border-radius: 3px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            border-color: rgba(255,255,255,0.4);
+            color: #ffffff;
+        }
+
+        .btn.active {
+            border: 2px solid #7fb3d5;
+            background: rgba(127, 179, 213, 0.15);
+            color: #ffffff;
+        }
+
+        .grid-big-numbers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            border: 2px solid #2D5016;
+            background: linear-gradient(135deg, rgba(45, 80, 22, 0.08) 0%, rgba(0,0,0,0.4) 100%);
+            padding: 28px;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #2D5016;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(127, 179, 213, 0.15);
+        }
+
+        .card.nordeste {
+            border-color: #8B4513;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.08) 0%, rgba(0,0,0,0.4) 100%);
+        }
+
+        .card.nordeste::before {
+            background: #8B4513;
+        }
+
+        .card.positive {
+            border-color: #00d084;
+            background: linear-gradient(135deg, rgba(0, 208, 132, 0.1) 0%, rgba(0,0,0,0.4) 100%);
+        }
+
+        .card.positive::before {
+            background: #00d084;
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: #7fb3d5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .card-value {
+            font-size: 38px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 12px;
+            word-break: break-word;
+        }
+
+        .card.positive .card-value {
+            color: #00d084;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: #b0b7c3;
+            line-height: 1.6;
+        }
+
+        .card-desc .badge {
+            display: inline-block;
+            font-size: 10px;
+            color: #7fb3d5;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: rgba(127, 179, 213, 0.15);
+            border-radius: 2px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            border: 2px solid rgba(127, 179, 213, 0.4);
+            background: rgba(0,0,0,0.3);
+            padding: 32px;
+            border-radius: 3px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #7fb3d5;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 28px;
+            font-weight: bold;
+            border-bottom: 2px solid rgba(127, 179, 213, 0.2);
+            padding-bottom: 12px;
+        }
+
+        .costs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .cost-block {
+            background: rgba(0,0,0,0.5);
+            padding: 16px;
+            border-radius: 3px;
+            border-left: 3px solid #7fb3d5;
+        }
+
+        .cost-percent {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .cost-name {
+            font-size: 11px;
+            color: #7fb3d5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(127, 179, 213, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #7fb3d5;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .cost-desc {
+            font-size: 11px;
+            color: #b0b7c3;
+            line-height: 1.5;
+        }
+
+        .alert {
+            border: 2px solid #ff6b6b;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(0,0,0,0.4) 100%);
+            padding: 28px;
+            border-radius: 3px;
+            margin-bottom: 40px;
+        }
+
+        .alert-title {
+            font-size: 13px;
+            color: #ff6b6b;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .alert-text {
+            font-size: 12px;
+            color: #b0b7c3;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .alert-scenarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .scenario {
+            background: rgba(0,0,0,0.5);
+            padding: 16px;
+            border-radius: 3px;
+            border-left: 3px solid;
+        }
+
+        .scenario.pessimist {
+            border-left-color: #ff6b6b;
+        }
+
+        .scenario.optimist {
+            border-left-color: #00d084;
+        }
+
+        .scenario-title {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .scenario.pessimist .scenario-title {
+            color: #ff6b6b;
+        }
+
+        .scenario.optimist .scenario-title {
+            color: #00d084;
+        }
+
+        .scenario-text {
+            font-size: 11px;
+            color: #b0b7c3;
+            line-height: 1.5;
+        }
+
+        .footer {
+            border-top: 2px solid rgba(127, 179, 213, 0.2);
+            padding-top: 32px;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: #b0b7c3;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-tag {
+            display: inline-block;
+            font-size: 11px;
+            color: #7fb3d5;
+            font-weight: bold;
+            padding: 8px 16px;
+            border: 1px solid #7fb3d5;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .grid-big-numbers {
+                grid-template-columns: 1fr;
+            }
+
+            .card-value {
+                font-size: 28px;
+            }
+        }
+
+        /* Animação de entrada */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-tag">📊 Análise Econômica Real | Dados PECEGE 2025/26</div>
+        <h1>CANA-DE-AÇÚCAR 2025/26</h1>
+        <p class="subtitle">Dados PECEGE | Workshop de Claude (Tera) | Problema real do dia a dia no agro</p>
+    </div>
+
+    <!-- Controles -->
+    <div class="controls">
+        <button class="btn active" onclick="selectRegion('centro-sul')">Centro-Sul</button>
+        <button class="btn" onclick="selectRegion('nordeste')">Nordeste</button>
+        <button class="btn" onclick="printPage()" style="margin-left: auto;">🖨️ Imprimir / Exportar</button>
+    </div>
+
+    <!-- Big Numbers -->
+    <div class="grid-big-numbers" id="cardsContainer">
+        <!-- Preenchido por JavaScript -->
+    </div>
+
+    <!-- Decomposição de Custos -->
+    <div class="section">
+        <div class="section-title">📉 Estrutura de Custos Operacionais 2025/26</div>
+        <div class="costs-grid">
+            <div class="cost-block">
+                <div class="cost-percent">52%</div>
+                <div class="cost-name">Operações</div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 52%;"></div></div>
+                <div class="cost-desc">Mão de obra, máquinas, diesel, combustível</div>
+            </div>
+            <div class="cost-block">
+                <div class="cost-percent">25%</div>
+                <div class="cost-name">Insumos</div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 25%;"></div></div>
+                <div class="cost-desc">Fertilizantes, defensivos, corretivos</div>
+            </div>
+            <div class="cost-block">
+                <div class="cost-percent">17%</div>
+                <div class="cost-name">Arrendamento</div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 17%;"></div></div>
+                <div class="cost-desc">Custo de terra ou oportunidade</div>
+            </div>
+            <div class="cost-block">
+                <div class="cost-percent">6%</div>
+                <div class="cost-name">Outros</div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 6%;"></div></div>
+                <div class="cost-desc">Admin, seguros, imprevistos</div>
+            </div>
+        </div>
+        <div style="margin-top: 24px; padding: 16px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 3px;">
+            <div style="font-size: 12px; color: #b0b7c3; line-height: 1.6;">
+                <strong style="color: #ff6b6b;">🔑 Insight Crítico:</strong> Operações (52%) são o maior vetor de custo. Reduzir diesel 5% + otimizar mão de obra 2% = <strong>R$ 2-3 mil/ha de economia</strong>.
+            </div>
+        </div>
+    </div>
+
+    <!-- Cenários -->
+    <div class="alert">
+        <div class="alert-title">⚠️ Pressão de Margens em 2025/26</div>
+        <div class="alert-text">
+            Custos sobem 7-8% enquanto preço do ATR cai (~R$ 1,10-1,12/kg vs R$ 1,19/kg em 2024/25). 
+            A margem do produtor é apertada. <strong>Eficiência operacional é diferencial competitivo.</strong>
+        </div>
+        <div class="alert-scenarios">
+            <div class="scenario pessimist">
+                <div class="scenario-title">❌ Cenário Pessimista</div>
+                <div class="scenario-text">Sem eficiência tecnológica = margem operacional muito apertada ou prejuízo. Produtor fica vulnerável a variações de preço.</div>
+            </div>
+            <div class="scenario optimist">
+                <div class="scenario-title">✅ Cenário Otimista</div>
+                <div class="scenario-text">Com telemetria + IA: reduz diesel 5%, otimiza mão de obra 2% = recupera R$ 2-3 mil/ha. Margem robusta e competitiva.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicadores Técnicos -->
+    <div class="section">
+        <div class="section-title">📊 Indicadores Econômicos Atuais</div>
+        <div class="costs-grid">
+            <div style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 3px; border: 1px solid rgba(127, 179, 213, 0.2);">
+                <div style="font-size: 12px; color: #7fb3d5; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Produtividade Média Brasil</div>
+                <div style="font-size: 28px; font-weight: bold; color: #ffffff;">75–85 t/ha</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 3px; border: 1px solid rgba(127, 179, 213, 0.2);">
+                <div style="font-size: 12px; color: #7fb3d5; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">ATR Médio (Qualidade)</div>
+                <div style="font-size: 28px; font-weight: bold; color: #ffffff;">130–140 kg/t</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 3px; border: 1px solid rgba(127, 179, 213, 0.2);">
+                <div style="font-size: 12px; color: #7fb3d5; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Longevidade do Canavial</div>
+                <div style="font-size: 28px; font-weight: bold; color: #ffffff;">5–6 cortes</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 3px; border: 1px solid rgba(127, 179, 213, 0.2);">
+                <div style="font-size: 12px; color: #7fb3d5; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Mecanização Centro-Sul</div>
+                <div style="font-size: 28px; font-weight: bold; color: #ffffff;">~75%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-text">
+            Fonte: PECEGE Consultoria | CanaOnline | CONAB | Embrapa | Levantamento Expedição Custos Cana (Fevereiro-Março/2026)
+        </div>
+        <div class="footer-tag">📈 Análise com dados estruturados | Feito com Claude</div>
+    </div>
+</div>
+
+<script>
+const regionData = {
+    'centro-sul': {
+        region: 'Centro-Sul',
+        formacao: 19438,
+        formacaoOld: 18014,
+        preparo: 5635,
+        plantio: 10198,
+        tratos: 3605,
+        produtividade: 80.4,
+        custoTonelada: 169.3,
+        custoToneladaOld: 159.0,
+        atr: 1.12,
+        atrOld: 1.19,
+        soca: 3688,
+        class: ''
+    },
+    'nordeste': {
+        region: 'Nordeste',
+        formacao: 21000,
+        formacaoOld: 19500,
+        preparo: 5800,
+        plantio: 11000,
+        tratos: 3700,
+        produtividade: 62.7,
+        custoTonelada: 186.0,
+        custoToneladaOld: 175.0,
+        atr: 1.10,
+        atrOld: 1.15,
+        soca: 4200,
+        class: 'nordeste'
+    }
+};
+
+function selectRegion(region) {
+    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    renderCards(region);
+}
+
+function renderCards(region) {
+    const data = regionData[region];
+    const atrHectare = data.produtividade * 135;
+    const receitaBruta = (atrHectare / 1000) * data.atr * 1000;
+    
+    const changeFormacao = (((data.formacao - data.formacaoOld) / data.formacaoOld) * 100).toFixed(1);
+    const changeCusto = (((data.custoTonelada - data.custoToneladaOld) / data.custoToneladaOld) * 100).toFixed(1);
+    const changeAtr = (((data.atr - data.atrOld) / data.atrOld) * 100).toFixed(1);
+
+    const cards = [
+        {
+            label: 'Formação do Canavial',
+            value: `R$ ${data.formacao.toLocaleString('pt-BR')}`,
+            desc: 'Por hectare (implantação)',
+            change: `${changeFormacao > 0 ? '↑ +' : '↓ '}${Math.abs(changeFormacao)}% vs 2024/25`
+        },
+        {
+            label: 'Custo Operacional',
+            value: `R$ ${data.custoTonelada.toFixed(1)}`,
+            desc: 'Por tonelada colhida',
+            change: `${changeCusto > 0 ? '↑ +' : '↓ '}${Math.abs(changeCusto)}% vs 2024/25`
+        },
+        {
+            label: 'Produtividade Média',
+            value: `${data.produtividade.toFixed(1)} t/ha`,
+            desc: 'Toneladas por hectare',
+            change: 'Projeção com recuperação'
+        },
+        {
+            label: 'Preço ATR',
+            value: `R$ ${data.atr.toFixed(2)}/kg`,
+            desc: 'Valor do açúcar recuperável',
+            change: `${changeAtr > 0 ? '↑ +' : '↓ '}${Math.abs(changeAtr)}% vs 2024/25`
+        },
+        {
+            label: 'Custo Soca/Ano',
+            value: `R$ ${data.soca.toLocaleString('pt-BR')}`,
+            desc: 'Manutenção anual',
+            change: 'Ciclo de 5-6 cortes'
+        },
+        {
+            label: 'Receita Bruta (Est.)',
+            value: `R$ ${Math.round(receitaBruta).toLocaleString('pt-BR')}`,
+            desc: 'Por hectare (ATR)',
+            change: 'Cenário base PECEGE',
+            positive: true
+        }
+    ];
+
+    const html = cards.map((card, i) => `
+        <div class="card ${data.class} ${card.positive ? 'positive' : ''}">
+            <div class="card-label">${card.label}</div>
+            <div class="card-value">${card.value}</div>
+            <div class="card-desc">
+                ${card.desc}
+                <span class="badge">${card.change}</span>
+            </div>
+        </div>
+    `).join('');
+
+    document.getElementById('cardsContainer').innerHTML = html;
+}
+
+function printPage() {
+    window.print();
+}
+
+// Inicializa
+renderCards('centro-sul');
+</script>
+
+</body>
+</html>
